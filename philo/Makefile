@@ -6,12 +6,24 @@ HEADER		= $(INCLUDE)philosopher.h
 
 CC			= clang
 
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -O3 -pthread
 
 SRCS 	=		philosopher.c					\
-				src/parsing/check_arguments.c	\
-				src/utils/utils_print.c			\
-				src/utils/utils_str.c			\
+				\
+				srcs/initialization/init.c		\
+				\
+				srcs/parsing/check_arguments.c	\
+				\
+				srcs/philo_routine/routine.c	\
+				\
+				srcs/threads_handler/monitor.c	\
+				srcs/threads_handler/threads.c	\
+				\
+				srcs/utils/utils_print.c		\
+				srcs/utils/utils_str.c			\
+				srcs/utils/utils_error.c		\
+				srcs/utils/utils_time.c			\
+
 
 OBJS    = ${SRCS:.c=.o}
 

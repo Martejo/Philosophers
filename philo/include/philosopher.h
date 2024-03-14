@@ -10,6 +10,7 @@
 # include <stdint.h>
 # include <limits.h>
 # include <errno.h>
+# include <stdbool.h>
 
 # define PHILO_MAX 300
 
@@ -26,19 +27,26 @@
 # define ERR_ARG_NBR "Error: Invalid number of arguments\n"
 
 /**Structure**/
+
+typedef struct s_thr_err
+{
+	bool	error;
+}	t_thr_err;
+
 typedef struct s_philo
 {
 	pthread_t		thread;
 	int				id;
 	int				eating;
 	int				meals_eaten;
-	size_t			last_meal;
-	size_t			time_to_die;
-	size_t			time_to_eat;
-	size_t			time_to_sleep;
-	size_t			start_time;
+	long			last_meal;
+	long			time_to_die;
+	long			time_to_eat;
+	long			time_to_sleep;
+	long			start_time;
 	int				num_of_philos;
 	int				num_times_to_eat;
+	t_thr_err		*thread_error;
 	int				*dead;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
@@ -46,8 +54,10 @@ typedef struct s_philo
 	pthread_mutex_t	*dead_lock;
 	pthread_mutex_t	*meal_lock;
 }					t_philo;
+
 typedef struct s_table
 {
+	t_thr_err		thread_error;
 	int				dead_flag;
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
@@ -70,8 +80,21 @@ typedef enum e_trdcode
 	DETACH,
 }			t_trdcode;
 
+typedef enum e_time_code
+{
+	SECONDS,
+	MILLISECOND,
+	MICROSECOND,
+}		t_time_code;
+
 /**Parsing**/
 uint8_t	args_are_valid(int argc, char **argv);
+
+/**Init**/
+void	init_input(t_philo *philo, char **argv);
+void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char **argv, int philo_nbr);
+void	init_forks(pthread_mutex_t *forks, int philo_num);
+void	init_launcher(t_table *table, t_philo *philos);
 
 /**Utils_print**/
 void	print_error(char *s, char *color, uint8_t fd);
@@ -83,7 +106,24 @@ long	ft_atol(const char *s);
 uint8_t	is_digit(const char *s);
 
 /**Utils_error**/
-static void	handle_mutex_error(int status, t_mtxcode mtxcode);
+void	handle_mutex_error(int status, t_mtxcode mtxcode);
 void	exit_error(char *strerr);
+void	destroy_all(char *str, t_table *table, pthread_mutex_t *forks, int nbr_thread_create);
+
+/**Utils_time**/
+long	get_time(int time_status);
+void	precise_usleep(long usec);
+
+/**Threads_handler**/
+void	*monitor(void *pointer);
+uint8_t	thread_create(t_table *table, pthread_mutex_t *forks);
+void	print_message(char *str, t_philo *philo, int id);
+int	dead_loop(t_philo *philo);
+
+/**Philo_routine**/
+void	think(t_philo *philo);
+void	dream(t_philo *philo);
+void	eat(t_philo *philo);
+
 
 #endif
