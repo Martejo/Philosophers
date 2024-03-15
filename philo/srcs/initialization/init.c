@@ -29,7 +29,8 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 		philos[i].dead_lock = &table->dead_lock;
 		philos[i].meal_lock = &table->meal_lock;
 		philos[i].dead = &table->dead_flag;
-		philos[i].thread_error = &table->thread_error;
+		philos[i].error = &table->error;
+		philos[i].thread_ready = &table->thread_ready;
 		philos[i].l_fork = &forks[i];
 		if (i == 0)
 			philos[i].r_fork = &forks[philos[i].num_of_philos - 1];
@@ -55,7 +56,8 @@ void	init_launcher(t_table *table, t_philo *philos)
 {
 	table->dead_flag = 0;
 	table->philos	= philos;
-	table->thread_error.error	= 0;
+	table->error	= 0;
+	table->thread_ready = 0;
 	handle_mutex_error(pthread_mutex_init(&table->write_lock, NULL), INIT);
 	handle_mutex_error(pthread_mutex_init(&table->dead_lock, NULL), INIT);
 	handle_mutex_error(pthread_mutex_init(&table->meal_lock, NULL), INIT);

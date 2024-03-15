@@ -6,7 +6,7 @@
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 10:31:38 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/14 18:17:39 by gemartel         ###   ########.fr       */
+/*   Updated: 2024/03/15 09:47:22 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ long	get_time(int time_status)
 	(void)time_status;
 	if (gettimeofday(&time, NULL) == -1)
 		write(2, "gettimeofday() error\n", 22);
-	printf("%zu\n", (size_t)time.tv_sec * 1000 + time.tv_usec / 1000);
+	//printf("%zu\n", (size_t)time.tv_sec * 1000 + time.tv_usec / 1000);
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
@@ -43,31 +43,31 @@ long	get_time(int time_status)
 // 	return (0);
 // }
 
-// void	precise_usleep(long usec)
-// {
-// 	long	start;
-// 	long	elapsed;
-// 	long	rem;
-
-// 	start = get_time(MICROSECOND);
-// 	while (get_time(MICROSECOND) - start < usec)
-// 	{
-// 		elapsed = get_time(MICROSECOND) - start;
-// 		rem = usec - elapsed;
-// 		if (rem > 1e4)
-// 			usleep(rem / 2);
-// 		else
-// 			while (get_time(MICROSECOND) - start < usec)
-// 				;
-// 	}
-// }
-
 void	precise_usleep(long usec)
 {
 	long	start;
+	long	elapsed;
+	long	rem;
 
-	start = get_time(MILLISECOND);
-	while ((get_time(MILLISECOND) - start) < usec)
-		usleep(500);
+	start = get_time(MICROSECOND);
+	while (get_time(MICROSECOND) - start < usec)
+	{
+		elapsed = get_time(MICROSECOND) - start;
+		rem = usec - elapsed;
+		if (rem > 1e4)
+			usleep(rem / 2);
+		else
+			while (get_time(MICROSECOND) - start < usec)
+				;
+	}
 }
+
+// void	precise_usleep(long usec)
+// {
+// 	long	start;
+
+// 	start = get_time(MILLISECOND);
+// 	while ((get_time(MILLISECOND) - start) < usec)
+// 		usleep(500);
+// }
 

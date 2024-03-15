@@ -25,13 +25,14 @@
 # define ERR_TIME_SLEEP "Invalid time to sleep\n"
 # define ERR_TIME_EAT_PER_PHILO  "Invalid number of times each philosopher must eat\n"
 # define ERR_ARG_NBR "Error: Invalid number of arguments\n"
+# define JOIN_EINVAL "The specified thread is not reachable or another thread is already waiting for it to finish."
+# define JOIN_ESRCH "No thread with the specified ID could be found."
+# define JOIN_EDEADLK "A deadlock has been detected or the thread is trying to join itself."
+# define CREATE_EAGAIN "The resources required to create a new thread are not available, or the system has reached its thread limit."
+# define CREATE_EINVAL "The specified attributes are invalid."
+# define CREATE_EPERM "Permissions are not sufficient to set the scheduling policy or the scheduling parameters specified in the attributes.\n"
 
 /**Structure**/
-
-typedef struct s_thr_err
-{
-	bool	error;
-}	t_thr_err;
 
 typedef struct s_philo
 {
@@ -46,7 +47,8 @@ typedef struct s_philo
 	long			start_time;
 	int				num_of_philos;
 	int				num_times_to_eat;
-	t_thr_err		*thread_error;
+	int				*error;
+	int				*thread_ready;
 	int				*dead;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
@@ -57,7 +59,8 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	t_thr_err		thread_error;
+	int				error;
+	int				thread_ready;
 	int				dead_flag;
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
@@ -65,20 +68,15 @@ typedef struct s_table
 	t_philo			*philos;
 }					t_table;
 
-typedef enum	e_mtxcode
+typedef enum e_statut_code
 {
+	JOIN,
+	CREATE,
+	INIT,
 	LOCK,
 	UNLOCK,
-	INIT,
 	DESTROY
-}	t_mtxcode;
-
-typedef enum e_trdcode
-{
-	CREATE,
-	JOIN,
-	DETACH,
-}			t_trdcode;
+}	t_status_code;
 
 typedef enum e_time_code
 {
@@ -106,9 +104,11 @@ long	ft_atol(const char *s);
 uint8_t	is_digit(const char *s);
 
 /**Utils_error**/
-void	handle_mutex_error(int status, t_mtxcode mtxcode);
+void	handle_mutex_error(int status, t_status_code code);
 void	exit_error(char *strerr);
-void	destroy_all(char *str, t_table *table, pthread_mutex_t *forks, int nbr_thread_create);
+void	handle_thread_error(int status, t_status_code code);
+void	terminate_and_cleanup(char *str, t_table *table, pthread_mutex_t *forks, int nbr_thread_create);
+
 
 /**Utils_time**/
 long	get_time(int time_status);

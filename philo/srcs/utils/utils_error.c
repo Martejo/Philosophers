@@ -6,7 +6,7 @@
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 13:23:58 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/14 15:33:54 by gemartel         ###   ########.fr       */
+/*   Updated: 2024/03/15 16:17:15 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,36 +30,54 @@
  */
 
 
-void	destroy_all(char *str, t_table *table, pthread_mutex_t *forks, int nbr_thread_create)
+void	terminate_and_cleanup(char *str, t_table *table, pthread_mutex_t *forks, int nbr_thread_create)
 {
 	int	i;
 
 	i = 0;
+	if (str)
+		print_error(str, RED, 2);
 	while (i < nbr_thread_create)
 	{
-		pthread_join(table->philos[i].thread, NULL);
+		handle_thread_error(pthread_join(table->philos[i].thread, NULL), JOIN);
 		i++;
 	}
-	pthread_mutex_destroy(&table->write_lock);
-	pthread_mutex_destroy(&table->meal_lock);
-	pthread_mutex_destroy(&table->dead_lock);
+	handle_mutex_error(pthread_mutex_destroy(&table->write_lock), DESTROY);
+	handle_mutex_error(pthread_mutex_destroy(&table->meal_lock), DESTROY);
+	handle_mutex_error(pthread_mutex_destroy(&table->dead_lock), DESTROY);
 	while (i < table->philos[0].num_of_philos)
 	{
-		pthread_mutex_destroy(&forks[i]);
+		handle_mutex_error(pthread_mutex_destroy(&forks[i]), DESTROY);
 		i++;
 	}
-	exit_error(str);
+	exit(table->error);
+}
+
+void	handle_thread_error(int status, t_status_code code)
+{
+	if (status == EINVAL && code == JOIN)
+		print_error(JOIN_EINVAL, RED, 2);
+	else if (status == ESRCH)
+		print_error(JOIN_ESRCH, RED, 2);
+	else if (status == EDEADLK)
+		print_error(JOIN_EDEADLK, RED, 2);
+	else if (status == EAGAIN)
+		print_error(CREATE_EAGAIN, RED, 2);
+	else if (status == EINVAL && code == CREATE)
+		print_error(CREATE_EINVAL, RED, 2);
+	else if (status == EPERM)
+		print_error(CREATE_EPERM, RED, 2);
 }
 
 
-void	handle_mutex_error(int status, t_mtxcode mtxcode)
+void	handle_mutex_error(int status, t_status_code code)
 {
 	if (0 == status)
 		return ;
-	if (EINVAL == status && (LOCK == mtxcode || UNLOCK == mtxcode))
+	if (EINVAL == status && (LOCK == code || UNLOCK == code))
 		exit_error("The value specified by mutex is invalid");
-	else if (EINVAL == status && INIT == mtxcode)
-		exit_error("The value specified by attr is invalid.");
+	else if (EINVAL == status && INIT == code)
+		exit_error("The value specified by attribute is invalid.");
 	else if (EDEADLK == status)
 		exit_error("A deadlock would occur if the thread "
 			"blocked waiting for mutex.");
