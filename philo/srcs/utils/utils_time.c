@@ -14,34 +14,34 @@
 
 // // Gets the current time in milliseconds
 
+// long long	get_time(int time_status)
+// {
+// 	struct timeval	time;
+
+// 	(void)time_status;
+// 	if (gettimeofday(&time, NULL) == -1)
+// 		write(2, "gettimeofday() error\n", 22);
+// 	//printf("%zu\n", (size_t)time.tv_sec * 1000 + time.tv_usec / 1000);
+// 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+// }
+
 long long	get_time(int time_status)
 {
 	struct timeval	time;
-
-	(void)time_status;
-	if (gettimeofday(&time, NULL) == -1)
-		write(2, "gettimeofday() error\n", 22);
-	//printf("%zu\n", (size_t)time.tv_sec * 1000 + time.tv_usec / 1000);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
-
-// long	get_time(int time_status)
-// {
-// 	struct timeval	time;
 	
-// 	if (gettimeofday(&time, NULL))
-// 		exit_error("Gettimeofday failed");
-// 	if (MILLISECOND == time_status)
-// 		return (time.tv_sec * 1e3 + time.tv_usec / 1e3);
-// 	else if (MICROSECOND == time_status)
-// 		return (time.tv_sec * 1e6 + time.tv_usec);
-// 	else if (SECONDS == time_status)
-// 		return (time.tv_sec + time.tv_usec / 1e6);
-// 	else
-// 		exit_error("Wrong input to gettime:"
-// 			"use <MILLISECOND> <MICROSECOND> <SECONDS>");
-// 	return (0);
-// }
+	if (gettimeofday(&time, NULL))
+		exit_error("Gettimeofday failed");
+	if (MILLISECOND == time_status)
+		return (time.tv_sec * 1e3 + time.tv_usec / 1e3);
+	else if (MICROSECOND == time_status)
+		return (time.tv_sec * 1e6 + time.tv_usec);
+	else if (SECONDS == time_status)
+		return (time.tv_sec + time.tv_usec / 1e6);
+	else
+		exit_error("Wrong input to gettime:"
+			"use <MILLISECOND> <MICROSECOND> <SECONDS>");
+	return (0);
+}
 
 // void	precise_usleep(long usec)
 // {
@@ -80,12 +80,26 @@ long long	get_time(int time_status)
 // 	}
 // }
 
-void	precise_usleep(long long usec)
-{
-	long long	start;
-	start = get_time(MILLISECOND);
-	while ((get_time(MILLISECOND) - start) < usec)
-		usleep(usec / 10);
-	//usleep(usec);
+void precise_usleep(long long usec) {
+    long long start, now, elapsed, remaining;
+
+    start = get_time(MICROSECOND); // Assurez-vous que get_time retourne des microsecondes ici
+    remaining = usec;
+
+    while (remaining > 0) {
+        usleep(remaining > 1000 ? remaining / 2 : remaining); // Dormez la moitié du temps restant ou tout s'il reste moins de 1 milliseconde
+        now = get_time(MICROSECOND);
+        elapsed = now - start;
+        remaining = usec - elapsed;
+    }
 }
+
+
+// void	precise_usleep(long long usec)
+// {
+// 	long long	start;
+// 	start = get_time(MILLISECOND);
+// 	while ((get_time(MILLISECOND) - start) < usec)
+// 		usleep(usec / 10);
+// }
 
