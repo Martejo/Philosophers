@@ -36,6 +36,20 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 			philos[i].r_fork = &forks[philos[i].num_of_philos - 1];
 		else
 			philos[i].r_fork = &forks[i - 1];
+		// if (i + 1 == philos[0].num_of_philos - 1)
+		// {
+		// 	philos[i].r_fork = &forks[0];
+		// 	philos[i].l_fork = &forks[i];
+		// 	// philo.first_fork = &(forks[0]);
+		// 	// philo.second_fork = &(forks[philo_id - 1]);
+		// }
+		// else
+		// {
+		// 	philos[i].r_fork = &forks[i];
+		// 	philos[i].l_fork = &forks[i + 1];
+		// 	// philo.first_fork = &(forks[philo_id - 1]);
+		// 	// philo.second_fork = &(forks[philo_id]);
+		// }
 		i++;
 	}
 }
