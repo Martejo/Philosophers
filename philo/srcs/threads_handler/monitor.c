@@ -25,14 +25,14 @@ void	print_message(char *str, t_philo *philo, int id)
 
 int	philosopher_dead(t_philo *philo, long time_to_die)
 {
-	pthread_mutex_lock(philo->meal_lock);
+	//pthread_mutex_lock(philo->meal_lock);
 	if (get_time(MILLISECOND) - philo->last_meal >= time_to_die
 		&& philo->eating == 0)
 	{
-		pthread_mutex_unlock(philo->meal_lock);
+		//pthread_mutex_unlock(philo->meal_lock);
 		return (1);
 	}
-	pthread_mutex_unlock(philo->meal_lock);
+//	pthread_mutex_unlock(philo->meal_lock);
 	return (0);
 }
 
@@ -94,7 +94,6 @@ void	*monitor(void *pointer)
 	{
 		if (check_if_dead(philos) == 1 || check_if_all_ate(philos) == 1)
 			break ;
-		precise_usleep(1);
 	}
 	return (pointer);
 }

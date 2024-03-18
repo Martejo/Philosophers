@@ -16,10 +16,10 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 {
 	int	i;
 	long long j;
-	long long k;
+	
 
 	j = get_time(MILLISECOND);
-	k = get_time(MILLISECOND);
+	
 	i = 0;
 	while (i < philo_nbr)
 	{
@@ -28,7 +28,7 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 		philos[i].eating = 0;
 		philos[i].meals_eaten = 0;
 		philos[i].start_time = j;
-		philos[i].last_meal = k;
+		philos[i].last_meal = get_time(MILLISECOND);
 		philos[i].write_lock = &table->write_lock;
 		philos[i].dead_lock = &table->dead_lock;
 		philos[i].meal_lock = &table->meal_lock;
@@ -36,11 +36,11 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 		philos[i].error = &table->error;
 		philos[i].thread_ready = &table->thread_ready;
 		philos[i].l_fork = &forks[i];
-		if (i == 0)
-			philos[i].r_fork = &forks[philo_nbr - 1];
-		else
-			philos[i].r_fork = &forks[i - 1];
-		// if (i + 1 == philos[0].num_of_philos - 1)
+		// if (i == 0)
+		// 	philos[i].r_fork = &forks[philo_nbr - 1];
+		// else
+		// 	philos[i].r_fork = &forks[i - 1];
+		// if (i % 2 == 0)
 		// {
 		// 	philos[i].r_fork = &forks[0];
 		// 	philos[i].l_fork = &forks[i];
@@ -54,6 +54,8 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 		// 	// philo.first_fork = &(forks[philo_id - 1]);
 		// 	// philo.second_fork = &(forks[philo_id]);
 		// }
+		philos[i].l_fork = &forks[i];
+		philos[i].r_fork = &forks[(i + 1) % philo_nbr];
 		i++;
 	}
 }

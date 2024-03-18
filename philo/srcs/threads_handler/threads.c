@@ -18,9 +18,9 @@ void	*philo_routine(void *pointer)
 	t_philo	*philo;
 
 	philo = (t_philo *)pointer;
+	
 	if (philo->id % 2 == 0)
-		precise_usleep(philo[0].num_of_philos / 10);
-
+		usleep(15000);
 	while (!dead_loop(philo))
 	{
 		if (*philo->error == 1)
