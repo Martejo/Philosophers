@@ -15,7 +15,11 @@ void	init_input(t_philo *philo, char **argv)
 void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char **argv, int philo_nbr)
 {
 	int	i;
+	long long j;
+	long long k;
 
+	j = get_time(MILLISECOND);
+	k = get_time(MILLISECOND);
 	i = 0;
 	while (i < philo_nbr)
 	{
@@ -23,8 +27,8 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 		philos[i].id = i + 1;
 		philos[i].eating = 0;
 		philos[i].meals_eaten = 0;
-		philos[i].start_time = get_time(MILLISECOND);
-		philos[i].last_meal = get_time(MILLISECOND);
+		philos[i].start_time = j;
+		philos[i].last_meal = k;
 		philos[i].write_lock = &table->write_lock;
 		philos[i].dead_lock = &table->dead_lock;
 		philos[i].meal_lock = &table->meal_lock;

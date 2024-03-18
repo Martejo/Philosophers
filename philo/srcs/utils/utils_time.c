@@ -67,6 +67,7 @@ void	precise_usleep(long long usec)
 	long long	start;
 	start = get_time(MILLISECOND);
 	while ((get_time(MILLISECOND) - start) < usec)
-		usleep(50);
+		usleep(usec / 10);
+	//usleep(usec);
 }
 
