@@ -37,7 +37,7 @@ void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char *
 		philos[i].thread_ready = &table->thread_ready;
 		philos[i].l_fork = &forks[i];
 		if (i == 0)
-			philos[i].r_fork = &forks[philos[i].num_of_philos - 1];
+			philos[i].r_fork = &forks[philo_nbr - 1];
 		else
 			philos[i].r_fork = &forks[i - 1];
 		// if (i + 1 == philos[0].num_of_philos - 1)

@@ -20,6 +20,7 @@ void	*philo_routine(void *pointer)
 	philo = (t_philo *)pointer;
 	if (philo->id % 2 == 0)
 		precise_usleep(philo[0].num_of_philos / 10);
+
 	while (!dead_loop(philo))
 	{
 		if (*philo->error == 1)
@@ -36,22 +37,14 @@ uint8_t	thread_create(t_table *table, pthread_mutex_t *forks)
 {
 	pthread_t	observer;
 	int			i;
-	//int			status;
-
 	
 	i = 0;
 	if (pthread_create(&observer, NULL, &monitor, table->philos) != 0)
 		terminate_and_cleanup("Thread creation error\n", table, forks, 0);
 	while (i < table->philos[0].num_of_philos)
 	{
-		//status = 
+		
 		pthread_create(&table->philos[i].thread, NULL, &philo_routine, &table->philos[i]);
-		// if (status != 0)
-		// {
-		// 	handle_thread_error(status, CREATE);
-		// 	table->error = 1;
-		// 	break ;
-		// }
 		i++;
 	}
 	pthread_join(observer, NULL);

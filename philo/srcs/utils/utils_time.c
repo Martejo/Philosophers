@@ -62,6 +62,24 @@ long long	get_time(int time_status)
 // 	}
 // }
 
+// long long	time_diff(long long past, long long pres)
+// {
+// 	return (pres - past);
+// }
+
+// void		precise_usleep(long long time, t_philo *philo)
+// {
+// 	long long i;
+
+// 	i = get_time(MILLISECOND);
+// 	while (!(philo->dead))
+// 	{
+// 		if (time_diff(i, get_time(MILLISECOND)) >= time)
+// 			break ;
+// 		usleep(time / 10);
+// 	}
+// }
+
 void	precise_usleep(long long usec)
 {
 	long long	start;

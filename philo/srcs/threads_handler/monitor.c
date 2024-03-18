@@ -46,9 +46,9 @@ int	check_if_dead(t_philo *philos)
 		if (philosopher_dead(&philos[i], philos[i].time_to_die))
 		{
 			print_message("died", &philos[i], philos[i].id);
-		//	pthread_mutex_lock(philos[0].dead_lock);
+			//pthread_mutex_lock(philos[0].dead_lock);
 			*philos->dead = 1;
-		//	pthread_mutex_unlock(philos[0].dead_lock);
+			//pthread_mutex_unlock(philos[0].dead_lock);
 			return (1);
 		}
 		i++;
@@ -77,9 +77,9 @@ int	check_if_all_ate(t_philo *philos)
 	}
 	if (finished_eating == philos[0].num_of_philos)
 	{
-	//	pthread_mutex_lock(philos[0].dead_lock);
+		//pthread_mutex_lock(philos[0].dead_lock);
 		*philos->dead = 1;
-	//	pthread_mutex_unlock(philos[0].dead_lock);
+		//pthread_mutex_unlock(philos[0].dead_lock);
 		return (1);
 	}
 	return (0);
@@ -91,7 +91,10 @@ void	*monitor(void *pointer)
 
 	philos = (t_philo *)pointer;
 	while (1)
+	{
 		if (check_if_dead(philos) == 1 || check_if_all_ate(philos) == 1)
 			break ;
+		precise_usleep(1);
+	}
 	return (pointer);
 }
