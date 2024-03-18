@@ -14,7 +14,7 @@
 
 // // Gets the current time in milliseconds
 
-long	get_time(int time_status)
+long long	get_time(int time_status)
 {
 	struct timeval	time;
 
@@ -43,30 +43,30 @@ long	get_time(int time_status)
 // 	return (0);
 // }
 
-void	precise_usleep(long usec)
-{
-	long	start;
-	long	elapsed;
-	long	rem;
-
-	start = get_time(MICROSECOND);
-	while (get_time(MICROSECOND) - start < usec)
-	{
-		elapsed = get_time(MICROSECOND) - start;
-		rem = usec - elapsed;
-		if (rem > 1e4)
-			usleep(rem / 2);
-		else
-			while (get_time(MICROSECOND) - start < usec)
-				;
-	}
-}
-
 // void	precise_usleep(long usec)
 // {
 // 	long	start;
-// 	start = get_time(MILLISECOND);
-// 	while ((get_time(MILLISECOND) - start) < usec)
-// 		usleep(100);
+// 	long	elapsed;
+// 	long	rem;
+
+// 	start = get_time(MICROSECOND);
+// 	while (get_time(MICROSECOND) - start < usec)
+// 	{
+// 		elapsed = get_time(MICROSECOND) - start;
+// 		rem = usec - elapsed;
+// 		if (rem > 1e4)
+// 			usleep(rem / 2);
+// 		else
+// 			while (get_time(MICROSECOND) - start < usec)
+// 				;
+// 	}
 // }
+
+void	precise_usleep(long long usec)
+{
+	long long	start;
+	start = get_time(MILLISECOND);
+	while ((get_time(MILLISECOND) - start) < usec)
+		usleep(50);
+}
 

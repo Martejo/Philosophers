@@ -14,22 +14,25 @@
 
 void	print_message(char *str, t_philo *philo, int id)
 {
-	long	time;
+	long long	time;
 
 	pthread_mutex_lock(philo->write_lock);
 	time = get_time(MILLISECOND) - philo->start_time;
 	if (!dead_loop(philo))
-		printf("%lu %d %s\n", time, id, str);
+		printf("%lld %d %s\n", time, id, str);
 	pthread_mutex_unlock(philo->write_lock);
 }
 
 int	philosopher_dead(t_philo *philo, long time_to_die)
 {
-	//pthread_mutex_lock(philo->meal_lock);
+	pthread_mutex_lock(philo->meal_lock);
 	if (get_time(MILLISECOND) - philo->last_meal >= time_to_die
 		&& philo->eating == 0)
-		return (/*pthread_mutex_unlock(philo->meal_lock),*/ 1);
-	//pthread_mutex_unlock(philo->meal_lock);
+	{
+		pthread_mutex_unlock(philo->meal_lock);
+		return (1);
+	}
+	pthread_mutex_unlock(philo->meal_lock);
 	return (0);
 }
 

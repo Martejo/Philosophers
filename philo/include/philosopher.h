@@ -40,11 +40,11 @@ typedef struct s_philo
 	int				id;
 	int				eating;
 	int				meals_eaten;
-	long			last_meal;
-	long			time_to_die;
-	long			time_to_eat;
-	long			time_to_sleep;
-	long			start_time;
+	long long			last_meal;
+	long	long		time_to_die;
+	long	long		time_to_eat;
+	long	long		time_to_sleep;
+	long	long		start_time;
 	int				num_of_philos;
 	int				num_times_to_eat;
 	int				*error;
@@ -111,8 +111,8 @@ void	terminate_and_cleanup(char *str, t_table *table, pthread_mutex_t *forks, in
 
 
 /**Utils_time**/
-long	get_time(int time_status);
-void	precise_usleep(long usec);
+long long	get_time(int time_status);
+void	precise_usleep(long long usec);
 
 /**Threads_handler**/
 void	*monitor(void *pointer);
