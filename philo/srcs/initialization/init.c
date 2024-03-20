@@ -15,47 +15,57 @@ void	init_input(t_philo *philo, char **argv)
 void	init_philos(t_philo *philos, t_table *table, pthread_mutex_t *forks, char **argv, int philo_nbr)
 {
 	int	i;
-	long long j;
-	
-
-	j = get_time(MILLISECOND);
 	
 	i = 0;
 	while (i < philo_nbr)
 	{
+		handle_mutex_error(pthread_mutex_init(&philos[i].meal_lock, NULL), INIT);
 		init_input(&philos[i], argv);
 		philos[i].id = i + 1;
-		philos[i].eating = 0;
+		philos[i].table = table;
 		philos[i].meals_eaten = 0;
-		philos[i].start_time = j;
+		//philos[i].start_time = &table->start_time;
 		philos[i].last_meal = get_time(MILLISECOND);
 		philos[i].write_lock = &table->write_lock;
 		philos[i].dead_lock = &table->dead_lock;
-		philos[i].meal_lock = &table->meal_lock;
+		// philos[i].meal_lock = &table->meal_lock;
 		philos[i].dead = &table->dead_flag;
 		philos[i].error = &table->error;
 		philos[i].thread_ready = &table->thread_ready;
-		philos[i].l_fork = &forks[i];
-		// if (i == 0)
-		// 	philos[i].r_fork = &forks[philo_nbr - 1];
-		// else
-		// 	philos[i].r_fork = &forks[i - 1];
-		// if (i % 2 == 0)
+		// philos[i].l_fork = &forks[i];
+		// philos[i].r_fork = &forks[(i + 1) % philo_nbr];
+		
+		// if (philo_nbr % 2 == 0)
 		// {
-		// 	philos[i].r_fork = &forks[0];
-		// 	philos[i].l_fork = &forks[i];
-		// 	// philo.first_fork = &(forks[0]);
-		// 	// philo.second_fork = &(forks[philo_id - 1]);
-		// }
+			if (philos[i].id % 2 == 0) 
+			{ // ID pair
+				philos[i].l_fork = &forks[i];
+				philos[i].r_fork = &forks[(i + 1) % philo_nbr];
+			} 	
+			else 
+			{
+				philos[i].r_fork = &forks[i];
+				philos[i].l_fork = &forks[(i + 1) % philo_nbr];
+			}
+		//}
 		// else
 		// {
-		// 	philos[i].r_fork = &forks[i];
-		// 	philos[i].l_fork = &forks[i + 1];
-		// 	// philo.first_fork = &(forks[philo_id - 1]);
-		// 	// philo.second_fork = &(forks[philo_id]);
+		// 	if (philos[i].id == philo_nbr)
+		// 	{
+		// 		philos[i].l_fork = &forks[0];
+		// 		philos[i].r_fork = &forks[i];
+		// 	}
+		// 	else if (philos[i].id % 2 == 0) 
+		// 	{ // ID pair
+		// 		philos[i].l_fork = &forks[i];
+		// 		philos[i].r_fork = &forks[(i + 1) % philo_nbr];
+		// 	} 	
+		// 	else
+		// 	{
+		// 		philos[i].r_fork = &forks[i];
+		// 		philos[i].l_fork = &forks[(i + 1) % philo_nbr];
+		// 	}
 		// }
-		philos[i].l_fork = &forks[i];
-		philos[i].r_fork = &forks[(i + 1) % philo_nbr];
 		i++;
 	}
 }
@@ -72,7 +82,7 @@ void	init_forks(pthread_mutex_t *forks, int philo_num)
 	}
 }
 
-void	init_launcher(t_table *table, t_philo *philos)
+void init_launcher(t_table *table, t_philo *philos)
 {
 	table->dead_flag = 0;
 	table->philos	= philos;
@@ -80,5 +90,4 @@ void	init_launcher(t_table *table, t_philo *philos)
 	table->thread_ready = 0;
 	handle_mutex_error(pthread_mutex_init(&table->write_lock, NULL), INIT);
 	handle_mutex_error(pthread_mutex_init(&table->dead_lock, NULL), INIT);
-	handle_mutex_error(pthread_mutex_init(&table->meal_lock, NULL), INIT);
 }

@@ -6,7 +6,7 @@
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 13:23:58 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/15 16:17:15 by gemartel         ###   ########.fr       */
+/*   Updated: 2024/03/20 14:24:28 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,12 @@ void	terminate_and_cleanup(char *str, t_table *table, pthread_mutex_t *forks, in
 	while (i < nbr_thread_create)
 	{
 		handle_thread_error(pthread_join(table->philos[i].thread, NULL), JOIN);
+		handle_mutex_error(pthread_mutex_destroy(&table->philos[i].meal_lock), DESTROY);
 		i++;
 	}
+	
 	handle_mutex_error(pthread_mutex_destroy(&table->write_lock), DESTROY);
-	handle_mutex_error(pthread_mutex_destroy(&table->meal_lock), DESTROY);
+	
 	handle_mutex_error(pthread_mutex_destroy(&table->dead_lock), DESTROY);
 	while (i < table->philos[0].num_of_philos)
 	{
@@ -70,25 +72,7 @@ void	handle_thread_error(int status, t_status_code code)
 }
 
 
-void	handle_mutex_error(int status, t_status_code code)
-{
-	if (0 == status)
-		return ;
-	if (EINVAL == status && (LOCK == code || UNLOCK == code))
-		exit_error("The value specified by mutex is invalid");
-	else if (EINVAL == status && INIT == code)
-		exit_error("The value specified by attribute is invalid.");
-	else if (EDEADLK == status)
-		exit_error("A deadlock would occur if the thread "
-			"blocked waiting for mutex.");
-	else if (EPERM == status)
-		exit_error("The current thread does not hold a lock on mutex.");
-	else if (ENOMEM == status)
-		exit_error("The process cannot allocate enough memory"
-			" to create another mutex.");
-	else if (EBUSY == status)
-		exit_error("Mutex is locked");
-}
+
 
 void	exit_error(char *strerr)
 {

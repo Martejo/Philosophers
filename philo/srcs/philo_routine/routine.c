@@ -6,17 +6,27 @@
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:22:11 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/14 18:16:44 by gemartel         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:51:54 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/philosopher.h"
 
-
-
-void	think(t_philo *philo)
+void	think(t_philo *philo, int pre_sim)
 {
-	print_message("is thinking", philo, philo->id);
+	long	t_eat;
+	long	t_sleep;
+	long	t_think;
+	if (pre_sim == 0)
+		print_message("is thinking", philo, philo->id);
+	if (philo->num_of_philos % 2 == 0)
+		return ;
+	t_eat = philo->time_to_eat;
+	t_sleep = philo->time_to_sleep;
+	t_think = (t_eat * 2) - t_sleep;
+	if (t_think < 0)
+		t_think = 0;
+	precise_usleep(t_think * 0.42);
 }
 
 void	dream(t_philo *philo)
@@ -25,60 +35,60 @@ void	dream(t_philo *philo)
 	precise_usleep(philo->time_to_sleep);
 }
 
-// void	eat(t_philo *philo)
-// {
-//     pthread_mutex_t *first_fork;
-//     pthread_mutex_t *second_fork;
+static void	pick_forks(t_philo *philo)
+{
+	// if (philo->id % 2 == 0)
+	// {
+	// 	pthread_mutex_lock(philo->l_fork);
+	// 	print_message("has taken a fork", philo, philo->id);
+	// 	pthread_mutex_lock(philo->r_fork);
+	// 	print_message("has taken a fork", philo, philo->id);
+	// 	return ;
+	// }
+	// else
+	// {
+	// 	pthread_mutex_lock(philo->r_fork);
+	// 	print_message("has taken a fork", philo, philo->id);
+	// 	pthread_mutex_lock(philo->l_fork);
+	// 	print_message("has taken a fork", philo, philo->id);
+	// }
+	pthread_mutex_lock(philo->r_fork);
+	print_message("has taken a fork", philo, philo->id);
+	pthread_mutex_lock(philo->l_fork);
+	print_message("has taken a fork", philo, philo->id);
+}
 
-//    // Déterminez le premier et le deuxième verrou à verrouiller
-// if (philo->id == philo->num_of_philos) { // Pour le dernier philosophe
-//     first_fork = philo->l_fork; // Inversement de l'ordre pour le dernier philosophe
-//     second_fork = philo->r_fork;
-// } else {
-//     first_fork = philo->r_fork; // Ordre normal pour les autres philosophes
-//     second_fork = philo->l_fork;
-// }
-//     // Verrouillez le premier puis le deuxième verrou
-//     pthread_mutex_lock(first_fork);
-//     print_message("has taken a fork", philo, philo->id);
-//     pthread_mutex_lock(second_fork);
-//     print_message("has taken a fork", philo, philo->id);
-
-//     // Manger
-//     philo->eating = 1;
-//     pthread_mutex_lock(philo->meal_lock);
-//     print_message("is eating", philo, philo->id);
-//     philo->last_meal = get_time(MILLISECOND);
-//     philo->meals_eaten++;
-//     pthread_mutex_unlock(philo->meal_lock);
-//     precise_usleep(philo->time_to_eat);
-//     philo->eating = 0;
-
-//     // Libérer les fourchettes
-//     pthread_mutex_unlock(second_fork);
-//     pthread_mutex_unlock(first_fork);
-// }
+static void	drop_forks(t_philo *philo)
+{
+	// if (philo->id % 2 == 0)
+	// {
+	// 	pthread_mutex_unlock(philo->l_fork);
+	// 	pthread_mutex_unlock(philo->r_fork);
+	// }
+	// else
+	// {
+	// 	pthread_mutex_unlock(philo->r_fork);
+	// 	pthread_mutex_unlock(philo->l_fork);
+	// }
+	pthread_mutex_unlock(philo->r_fork);
+	pthread_mutex_unlock(philo->l_fork);
+}
 
 void	eat(t_philo *philo)
 {
-	pthread_mutex_lock(philo->r_fork);
-	print_message("has taken a fork", philo, philo->id);
-	if (philo->num_of_philos == 1)
-	{
-		precise_usleep(philo->time_to_die);
-		pthread_mutex_unlock(philo->r_fork);
-		return ;
-	}
-	pthread_mutex_lock(philo->l_fork);
-	print_message("has taken a fork", philo, philo->id);
-	philo->eating = 1;
-	pthread_mutex_lock(philo->meal_lock);
-	print_message("is eating", philo, philo->id);
-	philo->last_meal = get_time(MILLISECOND);
+	pick_forks(philo);
+	// print_message("\x1b[31;1mis eating\x1b[0m", philo, philo->id);
 	philo->meals_eaten++;
-	pthread_mutex_unlock(philo->meal_lock);
+	
+	pthread_mutex_lock(&philo->meal_lock);
+	philo->last_meal = get_time();
+	print_message(RED"is eating"RESET, philo, philo->id);
+	if (philo->meals_eaten == philo->num_times_to_eat)
+		philo->is_full = 1;
+	pthread_mutex_unlock(&philo->meal_lock);
+	
 	precise_usleep(philo->time_to_eat);
-	philo->eating = 0;
-	pthread_mutex_unlock(philo->l_fork);
-	pthread_mutex_unlock(philo->r_fork);
+	drop_forks(philo);
+	dream(philo);
+	think(philo, 0);
 }

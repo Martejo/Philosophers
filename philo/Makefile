@@ -6,7 +6,7 @@ HEADER		= $(INCLUDE)philosopher.h
 
 CC			= clang
 
-CFLAGS		= -Wall -Wextra -Werror -O3 -pthread
+CFLAGS		=  -pthread -fsanitize=thread
 
 SRCS 	=		philosopher.c					\
 				\
