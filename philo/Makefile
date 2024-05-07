@@ -1,28 +1,26 @@
 NAME		= philo
 
-INCLUDE		= include/
 
-HEADER		= $(INCLUDE)philosopher.h
 
-CC			= clang
+HEADER		= philo.h
 
-CFLAGS		=  -pthread -fsanitize=thread
+CC			= cc
 
-SRCS 	=		philosopher.c					\
-				\
-				srcs/initialization/init.c		\
-				\
-				srcs/parsing/check_arguments.c	\
-				\
-				srcs/philo_routine/routine.c	\
-				\
-				srcs/threads_handler/monitor.c	\
-				srcs/threads_handler/threads.c	\
-				\
-				srcs/utils/utils_print.c		\
-				srcs/utils/utils_str.c			\
-				srcs/utils/utils_error.c		\
-				srcs/utils/utils_time.c			\
+CFLAGS		= -Wall -Wextra -Werror -pthread
+
+SRCS 	=		main.c		\
+				check_args.c	\
+				error_handler.c	\
+				init_simulation.c	\
+				diner_routine.c		\
+				init.c				\
+				libft_utils.c		\
+				monitor.c			\
+				mutex_access.c		\
+				mutex_handler.c		\
+				thread_handler.c	\
+				time.c				\
+				memory_utils.c		\
 
 
 OBJS    = ${SRCS:.c=.o}
@@ -32,23 +30,20 @@ _OK	= [\033[32mOK\033[0m]
 
 all :  $(NAME)
 
-
-${NAME}: ${OBJS} $(LIBFT_A)
-	@${CC} ${CFLAGS} -g3 -I include  -o $@ $^
+${NAME}: ${OBJS}
+	@${CC} ${CFLAGS} -o $@ $^
 	@echo "$(_OK) $(NAME) compiled"
 
-%.o: %.c  include/philosopher.h
-	@echo "[..] $(NAME_SHORT)... compiling $*.c\r\c"
-	@${CC} ${CFLAGS} -g3 -Iinclude  -c $< -o $@
+%.o: %.c  $(HEADER)
+	@echo "[..] $(NAME)... compiling $*.c\r\c"
+	@${CC} ${CFLAGS} -c $< -o $@
 	@echo "$(_CLEAR)"
-
+	
 clean :
 	@$(RM) $(OBJS)
-	@$(RM) $(OBJS_BONUS)
 
 fclean : clean
 	@$(RM) $(NAME)
-	@$(RM) $(NAME_BONUS)
 
 re : fclean all
 

@@ -1,22 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_handler.c                                    :+:      :+:    :+:   */
+/*   mutex_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/20 14:02:19 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/20 15:25:05 by gemartel         ###   ########.fr       */
+/*   Created: 2024/03/20 15:23:53 by gemartel          #+#    #+#             */
+/*   Updated: 2024/03/22 14:50:11 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-
-
-void	print_error(char *s)
+void	mutex_handle(t_mtx *mutex, t_code mtxcode)
 {
-	ft_putstr_fd(RED, 2);
-	ft_putstr_fd(s, 2);
-	ft_putstr_fd(RESET, 2);
+	if (LOCK == mtxcode)
+		pthread_mutex_lock(mutex);
+	else if (UNLOCK == mtxcode)
+		pthread_mutex_unlock(mutex);
+	else if (INIT == mtxcode)
+		pthread_mutex_init(mutex, NULL);
+	else if (DESTROY == mtxcode)
+		pthread_mutex_destroy(mutex);
 }

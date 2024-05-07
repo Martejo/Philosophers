@@ -6,7 +6,7 @@
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 13:56:03 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/20 14:33:57 by gemartel         ###   ########.fr       */
+/*   Updated: 2024/03/22 14:36:54 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,14 @@ static bool	check_content(char *content)
 	if (is_over_max_or_empty(content))
 		return (false);
 	if (!is_digit(content))
-			return (false);
+		return (false);
 	return (true);
 }
 
 static bool	check_syntax_and_size(char **argv)
 {
-	if (ft_atol(argv[1]) > PHILO_MAX || ft_atol(argv[1]) <= 0 || !check_content(argv[1]))
+	if (ft_atol(argv[1]) > PHILO_MAX || ft_atol(argv[1]) <= 0
+		|| !check_content(argv[1]))
 		return (print_error(ERR_PHILO_NBR), false);
 	if (!check_content(argv[2]))
 		return (print_error(ERR_TIME_DIE), false);

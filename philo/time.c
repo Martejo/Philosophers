@@ -1,35 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_time.c                                       :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/14 10:31:38 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/20 11:54:19 by gemartel         ###   ########.fr       */
+/*   Created: 2024/03/21 10:24:47 by gemartel          #+#    #+#             */
+/*   Updated: 2024/03/25 16:40:40 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/philosopher.h"
+#include "philo.h"
 
-long	get_time()
+long	get_elapsed_time_ms(long timestamp_start)
 {
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		write(2, "gettimeofday() error\n", 22);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+	return (get_time() - timestamp_start);
 }
 
-void	precise_usleep(long usec)
+long	get_time(void)
 {
-	long	start;
+	struct timeval	tv;
 
-	start = get_time();
-	while ((get_time() - start) < usec)
-	{
-		usleep(50);
-	}
-	
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
+void	precise_sleep(t_table *table, long ms)
+{
+	long	start_time;
+
+	start_time = get_time();
+	(void)table;
+	while ((get_time() - start_time) < ms)
+		usleep(100);
+}

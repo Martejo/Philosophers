@@ -6,11 +6,11 @@
 /*   By: gemartel <gemartel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 13:58:22 by gemartel          #+#    #+#             */
-/*   Updated: 2024/03/20 13:58:44 by gemartel         ###   ########.fr       */
+/*   Updated: 2024/03/22 14:34:25 by gemartel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
+#include "philo.h"
 
 uint8_t	is_digit(const char *s)
 {
